@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <script>
+      var owner;
+      function getAllAdvertise() {
+        instance.owner(function(error, result) {
+          if(!error) {
+            owner = result;
+          }
+        });
+        var filter = instance.getAdvetiseCount(function(error, result) {
+          if(!error) {
+            for(var i=0;i<result.c[0];i++) {
+              instance.advertises(owner, i, function(error, result) {
+                var url = result[1];
+                var name = result[2];
+                var length = result[3].c[0];
+                var minViews = result[4];
+                var newLine = document.createElement("br");
+                var p = document.createElement("p");       
+                var joinButton = document.createElement("button");
+                joinButton.onclick=         
+                p.className = "advertiseInfo";
+                p.innerHTML = url + "\n" + name + "\n" + length + "\n" + minViews;                
+              
+                var advertiseArea = document.createElement("div").appendChild(p);
+
+                
+                document.body.appendChild(advertiseArea);
+                document.body.appendChild(newLine);
+              });
+            }
+          }
+        });
+      }
+
+      function advertiseJoinMember() {
+
+      }
+    </script>
+  </head>
+
+  <body onload="getAllAdvertise()">
+
+
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    <script src="assets/js/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+  
+  
+    <script>
+      backgroundElement = document.getElementById("background")
+      overlayElement = document.getElementById("overlay")
+      videoElement = document.getElementById("myVideo")
+     // configuration
+
+      var abi = '[ { "constant": false, "inputs": [ { "name": "_url", "type": "string" }, { "name": "_name", "type": "string" }, { "name": "_length", "type": "uint256" }, { "name": "_minViews", "type": "uint256" }, { "name": "_funds", "type": "uint256" } ], "name": "addAdvertise", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "addBalance", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [ { "name": "advertiseIndex", "type": "uint256" }, { "name": "views", "type": "uint256" } ], "name": "addViews", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "kill", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "advertiseIndex", "type": "uint256" }, { "name": "views", "type": "uint256" } ], "name": "refunds", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "registerMember", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "uint256" }, { "name": "", "type": "uint256" } ], "name": "addressRegisterMember", "outputs": [ { "name": "userAddress", "type": "address" }, { "name": "views", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "address" }, { "name": "", "type": "uint256" } ], "name": "advertises", "outputs": [ { "name": "index", "type": "uint256" }, { "name": "url", "type": "string" }, { "name": "name", "type": "string" }, { "name": "length", "type": "uint256" }, { "name": "minViews", "type": "uint256" }, { "name": "funds", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "checkAdvertiseBalance", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" }, { "name": "views", "type": "uint256" } ], "name": "checkViews", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getAdvetiseCount", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "user", "type": "address" }, { "name": "advertiseIndex", "type": "uint256" } ], "name": "getUserIndex", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "isMember", "outputs": [ { "name": "", "type": "bool" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" }, { "name": "views", "type": "uint256" } ], "name": "isRefundable", "outputs": [ { "name": "", "type": "bool" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "owner", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" } ]';
+      var contractAddress = "0x4a1a99e3efff7c9ce1ad6bb6a860951d2868107d";
+ 
+      // load web3.js
+      var Web3 = require('web3');
+      window.web3 = new Web3(window.web3.currentProvider);
+      var contract = window.web3.eth.contract(JSON.parse(abi));
+      var instance = contract.at(contractAddress);
+
+
+
+      // var web3 = new Web3();
+      // web3 = web3.eth.currentProvider;
+      // alert(web3);
+
+      // window.web3 = new Web3(window.web3.currentProvider);
+      //web3.setProvider(new web3.providers.HttpProvider('http://192.168.99.20:8545'));
+
+      // load the contract object
+      // var blockshaperContract = window.web3.eth.contract(abi);
+      // var myContractInstance = blockshaperContract.at(contractAddress);
+      
+      function getCount() {
+        var filter = instance.getAdvetiseCount( function (error, result) {
+        if (!error)
+          console.log(result.c[0]);
+        });
+      }
+
+      // watch for events
+      // var filter = web3.eth.filter({ address: [contractAddress], fromBlock: 0, toBlock: "latest" });
+      // filter.watch(function (error, result) {
+      //   // extract the senderAddress from the data object
+      //   senderAddress = result.data.substring(26, 66);
+      //   console.log(senderAddress);
+      //   // load the video object of the address that signed a contract instance
+     
+       
+      //     /*
+      //     /// 이거 안맞아요.
+      //       videoInstance[0] = url
+      //       videoInstance[1] = length
+      //       videoInstance[2] = format
+      //       videoInstance[3] = lastChanged
+      //     */
+      //     videoInstance = myContractInstance.videos("0x" + senderAddress);
+      //     // play the ad for the specified amount of time
+      //     console.log(videoInstance[0]);
+      //     console.log(videoInstance[1]);
+      //     console.log(videoInstance[2]);
+      //     console.log(videoInstance[3]);
+      //     videoElement.src = videoInstance[2] + "?enablejsapi=1&version=3&playerapiid=ytplayer";
+      //     backgroundElement.style.visibility = "hidden";
+      //     overlayElement.style.visibility = "hidden";
+      //     videoElement.style.visibility = "visible";
+      //     $('.youtube-video')[0].contentWindow.postMessage('{"event":"command","func":"' + 'playVideo' + '","args":""}', '*');
+      //     // videoElement.innerHTML = '<source src="' + videoInstance[2] + '" type="video/youtube">'
+      //     // videoElement.innerHTML = '<source src="' + videoInstance[2] + '" type="video/' + videoInstance[2] + '">'
+      //     // videoElement.currentTime = 0;
+         
+      //     // videoElement.load();
+      //     // videoElement.play(); 
+      //     setTimeout(function(){
+      //       // videoElement.pause();
+      //       $('.youtube-video')[0].contentWindow.postMessage('{"event":"command","func":"' + 'pauseVideo' + '","args":""}', '*');
+      //       // videoElement.stopVideo();
+      //       console.log(videoInstance[1].toNumber());
+            
+      //       videoElement.style.visibility = "hidden";
+      //       backgroundElement.style.visibility = "visible";
+      //       overlayElement.style.visibility = "visible";
+      //     }, videoInstance[1].toNumber() * 1000);
+      
+      // });
+
+    </script>
+
+
+  </body>
+</html>

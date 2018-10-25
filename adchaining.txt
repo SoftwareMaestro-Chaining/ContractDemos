@@ -53,7 +53,7 @@ contract Advertiser is auth {
         }));
     }
     
-    function isMember (uint advertiseIndex) returns(bool){
+    function isMember (uint advertiseIndex) view returns(bool){
         uint length = addressRegisterMember[advertiseIndex].length;
         for(uint i=0; i<length; i++) {
             if(addressRegisterMember[advertiseIndex][i].userAddress == msg.sender) {
@@ -89,7 +89,7 @@ contract Advertiser is auth {
         uint currentViews = checkViews(advertiseIndex, views);
         addViews(advertiseIndex, currentViews);
         uint refundValue = currentViews / advertises[owner][advertiseIndex].minViews;
-        refundValue = refundValue * 500000000000000; // 1$ per 1000 views
+        refundValue = refundValue * 500000000000000;
         msg.sender.send(refundValue);
     }
     
@@ -105,6 +105,10 @@ contract Advertiser is auth {
         } else {
             return false;
         }
+    }
+    
+    function getAdvetiseCount() view returns(uint) {
+        return advertises[owner].length;
     }
     
     function addBalance() payable onlyOwner {
