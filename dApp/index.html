@@ -10,12 +10,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
     <script>
+     // 가입
      function advertiseJoinMember(index) {
-          // instance.registerMember(index,{gas:2000}, function(error, result) {
-          //   if(!error) {
-          //     console.log(success);
-          //   }
-          // });
           instance.registerMember(index, 
             {
               from: instance._eth.accounts[0], gas:2000
@@ -26,10 +22,38 @@
           );
       }
 
+      // 환급
+      function refunds(index, views) {
+        instance.refunds(index, views, {
+          from: instance._eth.accounts[0],
+          gas:2000
+        },
+        function(error, result) {
+          var myBalance;
+          instance._eth.getBalance(instance._eth.accounts[0], function(err, result) {
+             myBalance = result.c[0];
+             document.getElementById('user_balance').innerHTML = myBalance;
+          });
+        })
+      }
+
       var owner;
       var currentBalance;
+      var myBalance;
+      // 모든 광고, 소유자, 돈 가져오기
       function getAllAdvertise() {
 
+        // 보유 이더 가져오기
+        instance._eth.getBalance(instance._eth.accounts[0], function(err, result) {
+           myBalance = result.c[0]; 
+           myBalance = web3.toWei(myBalance, 'ether');
+           var userBalance = document.createElement("div");
+           userBalance.id = "user_balance";
+           userBalance.innerHTML = "My Balance : " + myBalance;
+           document.body.appendChild(userBalance);
+        });
+
+        // 광고 소유자 주소
         instance.owner(function(error, result) {
           if(!error) {
             owner = result;
@@ -39,6 +63,7 @@
           }
         });        
 
+        // 광고에 남아있는 이더 수
         instance.checkAdvertiseBalance(function(error, result) {
           if(!error) {
             balance = result.c[0];
@@ -50,7 +75,7 @@
           }
         });
         
-
+        // 모든 광고 가져오기
         var filter = instance.getAdvetiseCount(function(error, result) {
           if(!error) {
             for(var i=0;i<result.c[0];i++) {
@@ -111,6 +136,7 @@
 
 
 
+      // ToDo // attach local geth 
       // var web3 = new Web3();
       // web3 = web3.eth.currentProvider;
       // alert(web3);
@@ -129,51 +155,6 @@
         });
       }
 
-      // watch for events
-      // var filter = web3.eth.filter({ address: [contractAddress], fromBlock: 0, toBlock: "latest" });
-      // filter.watch(function (error, result) {
-      //   // extract the senderAddress from the data object
-      //   senderAddress = result.data.substring(26, 66);
-      //   console.log(senderAddress);
-      //   // load the video object of the address that signed a contract instance
-     
-       
-      //     /*
-      //     /// 이거 안맞아요.
-      //       videoInstance[0] = url
-      //       videoInstance[1] = length
-      //       videoInstance[2] = format
-      //       videoInstance[3] = lastChanged
-      //     */
-      //     videoInstance = myContractInstance.videos("0x" + senderAddress);
-      //     // play the ad for the specified amount of time
-      //     console.log(videoInstance[0]);
-      //     console.log(videoInstance[1]);
-      //     console.log(videoInstance[2]);
-      //     console.log(videoInstance[3]);
-      //     videoElement.src = videoInstance[2] + "?enablejsapi=1&version=3&playerapiid=ytplayer";
-      //     backgroundElement.style.visibility = "hidden";
-      //     overlayElement.style.visibility = "hidden";
-      //     videoElement.style.visibility = "visible";
-      //     $('.youtube-video')[0].contentWindow.postMessage('{"event":"command","func":"' + 'playVideo' + '","args":""}', '*');
-      //     // videoElement.innerHTML = '<source src="' + videoInstance[2] + '" type="video/youtube">'
-      //     // videoElement.innerHTML = '<source src="' + videoInstance[2] + '" type="video/' + videoInstance[2] + '">'
-      //     // videoElement.currentTime = 0;
-         
-      //     // videoElement.load();
-      //     // videoElement.play(); 
-      //     setTimeout(function(){
-      //       // videoElement.pause();
-      //       $('.youtube-video')[0].contentWindow.postMessage('{"event":"command","func":"' + 'pauseVideo' + '","args":""}', '*');
-      //       // videoElement.stopVideo();
-      //       console.log(videoInstance[1].toNumber());
-            
-      //       videoElement.style.visibility = "hidden";
-      //       backgroundElement.style.visibility = "visible";
-      //       overlayElement.style.visibility = "visible";
-      //     }, videoInstance[1].toNumber() * 1000);
-      
-      // });
 
     </script>
 
