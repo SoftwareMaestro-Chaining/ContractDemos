@@ -7,6 +7,10 @@ contract AbstractAdmin {
         admin_address = msg.sender;
     }
     
+    function getAdminAddress() public view returns(address){
+        return admin_address;
+    }
+    
     modifier onlyAdmin {
         if(msg.sender != admin_address) revert();
         _;
@@ -36,15 +40,14 @@ contract Admin is AbstractAdmin {
         if(msg.sender != admin_address) revert();
     }
     
-    function addAdvertise() public onlyAdmin;
 }
 
 contract User is AbstractUser {
     
     uint views;
     
-    function registerMember() public {
-        setAddress(msg.sender);
+    constructor(address _address) {
+        setAddress(_address);
     }
     
     function setViews(uint _views) public {
@@ -55,8 +58,9 @@ contract User is AbstractUser {
         return views;
     }
     
-    function getReward() {
-        
+    function getReward(uint money) public returns (uint) {
+        money = 0;
+        return money;
     }
 }
 
@@ -110,16 +114,27 @@ contract Advertise {
     }
 }
 
-contract AdvertiseApplication is Admin, User {
+contract AdvertiseApplication is Admin {
     
     mapping(address => Advertise[]) public advertises;
     mapping(uint => User[]) public member; // advertise pk -> user
     
+    function addAdvertise(string _url, string _name, uint _advertiseLength, uint _minimumViews, uint _ratioViews) onlyAdmin {
+
+        address adminAddress = getAdminAddress();
+        uint length = advertises[adminAddress].length;
+        
+        Advertise ad = new Advertise(length, _url, _name, _advertiseLength, _minimumViews, _ratioViews);
+        advertises[adminAddress].push(ad);
+    }
+    
     function registerMember(uint advertiseIndex) public {
         require(!isMember(advertiseIndex));
-        User _user = new User();
-        _user.registerMember();
-        member[advertiseIndex].push(_user);
+        member[advertiseIndex].push(new User(msg.sender));
+    }
+    
+    function getCurrentAddress() public view returns(address) {
+        return msg.sender;
     }
 
     // verify that registerd user of ad
@@ -136,6 +151,15 @@ contract AdvertiseApplication is Admin, User {
         return _isMember;
     }
     
+    
+    function getAdvertiseCount() public view returns(uint) {
+        return advertises[getAdminAddress()].length;
+    }
+    
+    function getMemberCount(uint advertiseIndex) public view returns(uint) {
+        return member[advertiseIndex].length;
+    }
+    
     // get member info of advertise
     function getMember(uint advertiseIndex) public view returns(User _user) {
         uint length = member[advertiseIndex].length;
@@ -150,13 +174,23 @@ contract AdvertiseApplication is Admin, User {
         return user;
     }
     
-    function getSize() public view returns(uint) {
-        return member[0].length;
+    function getAdvertise(uint advertiseIndex) public view returns(Advertise _advertise) {
+        return advertises[getAdminAddress()][advertiseIndex];
     }
     
-    function checkViews(uint advertiseIndex, uint views) public view returns(uint){
+    function getCurrentViews(uint advertiseIndex, uint views) public view returns(uint){
         User _user = getMember(advertiseIndex);
         uint accumulateViews = _user.getView();
         return views - accumulateViews;
+    }
+    
+    function getReward(uint advertiseIndex, uint views) {
+        uint currentViews = getCurrentViews(advertiseIndex, views);
+        Advertise _advertise = getAdvertise(advertiseIndex);
+        uint minimumViews = _advertise.getMinimumViews();
+    }
+    
+    function getMemberAddress(uint advertiseIndex, uint userIndex) public view returns(address) {
+        return member[advertiseIndex][userIndex].getAddress();
     }
 }
