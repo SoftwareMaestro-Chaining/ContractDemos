@@ -109,7 +109,7 @@ contract Advertise {
         return index;
     }
     
-    function getname() public view returns(string) {
+    function getName() public view returns(string) {
         return name;
     }
 }
@@ -172,6 +172,10 @@ contract AdvertiseApplication is Admin {
             }
         }
         return user;
+    }
+    
+    function getAdvertiseName (uint advertiseIndex) public view returns(string) {
+        return advertises[getAdminAddress()][advertiseIndex].getName();
     }
     
     function getAdvertise(uint advertiseIndex) public view returns(Advertise _advertise) {
