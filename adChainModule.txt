@@ -1,0 +1,162 @@
+pragma solidity ^0.4.24;
+
+contract AbstractAdmin {
+    address public admin_address;
+    
+    constructor() public {
+        admin_address = msg.sender;
+    }
+    
+    modifier onlyAdmin {
+        if(msg.sender != admin_address) revert();
+        _;
+    }
+    
+    function kill() onlyAdmin public {
+        selfdestruct(admin_address);
+    }
+}
+
+contract AbstractUser {
+    
+    address public user_address;
+
+    function setAddress(address _address) public {
+        user_address = _address;
+    }
+    
+    function getAddress() public view returns(address) {
+        return user_address;
+    }
+}
+
+contract Admin is AbstractAdmin {
+
+    function addBalance() public payable onlyAdmin {
+        if(msg.sender != admin_address) revert();
+    }
+    
+    function addAdvertise() public onlyAdmin;
+}
+
+contract User is AbstractUser {
+    
+    uint views;
+    
+    function registerMember() public {
+        setAddress(msg.sender);
+    }
+    
+    function setViews(uint _views) public {
+        views = _views;
+    }
+    
+    function getView() public view returns(uint) {
+        return views;
+    }
+    
+    function getReward() {
+        
+    }
+}
+
+contract Advertise {
+    uint index;
+    string url;
+    string name;
+    uint advertiseLength;
+    uint minimumViews;
+    uint rewardRatio;
+    
+    constructor(uint _index, string _url, string _name, uint _advertiseLength, uint _minimumViews, uint _rewardRatio) public {
+        index = _index;
+        url = _url;
+        name = _name;
+        advertiseLength = _advertiseLength;
+        minimumViews = _minimumViews;
+        rewardRatio = _rewardRatio;
+    }
+    
+    function isAvailableReward(uint _views) public view returns(bool){
+        if(_views < minimumViews) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    function getMinimumViews() public view returns(uint) {
+        return minimumViews;
+    }
+    
+    function getAdvertiseLength() public view returns(uint) {
+        return advertiseLength;
+    }
+    
+    function getRewardRatio() public view returns(uint) {
+        return rewardRatio;
+    }
+    
+    function getUrl() public view returns(string) {
+        return url;
+    }
+    
+    function getIndex() public view returns(uint) {
+        return index;
+    }
+    
+    function getname() public view returns(string) {
+        return name;
+    }
+}
+
+contract AdvertiseApplication is Admin, User {
+    
+    mapping(address => Advertise[]) public advertises;
+    mapping(uint => User[]) public member; // advertise pk -> user
+    
+    function registerMember(uint advertiseIndex) public {
+        require(!isMember(advertiseIndex));
+        User _user = new User();
+        _user.registerMember();
+        member[advertiseIndex].push(_user);
+    }
+
+    // verify that registerd user of ad
+    function isMember(uint advertiseIndex) public view returns(bool) {
+        uint length = member[advertiseIndex].length;
+        bool _isMember = false;
+        for(uint i=0; i< length; i++) {
+            User _user = member[advertiseIndex][i];
+            if(_user.getAddress() == msg.sender) {
+                _isMember = true;
+                break;
+            }
+        }
+        return _isMember;
+    }
+    
+    // get member info of advertise
+    function getMember(uint advertiseIndex) public view returns(User _user) {
+        uint length = member[advertiseIndex].length;
+        require(isMember(advertiseIndex));
+        User user;
+        for(uint i=0; i<length; i++) {
+            user = member[advertiseIndex][i];
+            if(user.getAddress() == msg.sender) {
+                break;
+            }
+        }
+        return user;
+    }
+    
+    function getSize() public view returns(uint) {
+        return member[0].length;
+    }
+    
+    function checkViews(uint advertiseIndex, uint views) public view returns(uint){
+        User _user = getMember(advertiseIndex);
+        uint accumulateViews = _user.getView();
+        return views - accumulateViews;
+    }
+}
