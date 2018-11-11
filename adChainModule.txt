@@ -1,14 +1,11 @@
 pragma solidity ^0.4.24;
 
-contract AbstractAdmin {
-    address public admin_address;
+contract Producer {
     
+    address public admin_address;
+
     constructor() public {
         admin_address = msg.sender;
-    }
-    
-    function getAdminAddress() public view returns(address){
-        return admin_address;
     }
     
     modifier onlyAdmin {
@@ -16,12 +13,21 @@ contract AbstractAdmin {
         _;
     }
     
+    function getAdminAddress() public view returns(address){
+        return admin_address;
+    }
+    
     function kill() onlyAdmin public {
         selfdestruct(admin_address);
     }
+
+    function addBalance() public payable onlyAdmin {
+        if(msg.sender != admin_address) revert();
+    }
+    
 }
 
-contract AbstractUser {
+contract Customer {
     
     address public user_address;
 
@@ -32,21 +38,10 @@ contract AbstractUser {
     function getAddress() public view returns(address) {
         return user_address;
     }
-}
-
-contract Admin is AbstractAdmin {
-
-    function addBalance() public payable onlyAdmin {
-        if(msg.sender != admin_address) revert();
-    }
-    
-}
-
-contract User is AbstractUser {
     
     uint views;
     
-    constructor(address _address) {
+    constructor(address _address) public {
         setAddress(_address);
     }
     
@@ -59,7 +54,6 @@ contract User is AbstractUser {
     }
     
     function getReward(uint money) public returns (uint) {
-        money = 0;
         return money;
     }
 }
@@ -114,10 +108,10 @@ contract Advertise {
     }
 }
 
-contract AdvertiseApplication is Admin {
+contract AdvertiseApplication is Producer {
     
     mapping(address => Advertise[]) public advertises;
-    mapping(uint => User[]) public member; // advertise pk -> user
+    mapping(uint => Customer[]) public member; // advertise pk -> user
     
     function addAdvertise(string _url, string _name, uint _advertiseLength, uint _minimumViews, uint _ratioViews) onlyAdmin {
 
@@ -130,9 +124,10 @@ contract AdvertiseApplication is Admin {
     
     function registerMember(uint advertiseIndex) public {
         require(!isMember(advertiseIndex));
-        member[advertiseIndex].push(new User(msg.sender));
+        Customer customer = new Customer(msg.sender);
+        member[advertiseIndex].push(customer);
     }
-    
+
     function getCurrentAddress() public view returns(address) {
         return msg.sender;
     }
@@ -142,8 +137,8 @@ contract AdvertiseApplication is Admin {
         uint length = member[advertiseIndex].length;
         bool _isMember = false;
         for(uint i=0; i< length; i++) {
-            User _user = member[advertiseIndex][i];
-            if(_user.getAddress() == msg.sender) {
+            Customer _customer = member[advertiseIndex][i];
+            if(_customer.getAddress() == msg.sender) {
                 _isMember = true;
                 break;
             }
@@ -161,17 +156,17 @@ contract AdvertiseApplication is Admin {
     }
     
     // get member info of advertise
-    function getMember(uint advertiseIndex) public view returns(User _user) {
+    function getMember(uint advertiseIndex) public view returns(Customer _customer) {
         uint length = member[advertiseIndex].length;
         require(isMember(advertiseIndex));
-        User user;
+        Customer customer;
         for(uint i=0; i<length; i++) {
-            user = member[advertiseIndex][i];
-            if(user.getAddress() == msg.sender) {
+            customer = member[advertiseIndex][i];
+            if(customer.getAddress() == msg.sender) {
                 break;
             }
         }
-        return user;
+        return customer;
     }
     
     function getAdvertiseName (uint advertiseIndex) public view returns(string) {
@@ -183,8 +178,8 @@ contract AdvertiseApplication is Admin {
     }
     
     function getCurrentViews(uint advertiseIndex, uint views) public view returns(uint){
-        User _user = getMember(advertiseIndex);
-        uint accumulateViews = _user.getView();
+        Customer _customer = getMember(advertiseIndex);
+        uint accumulateViews = _customer.getView();
         return views - accumulateViews;
     }
     
