@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <script>
+
+      var owner;
+      var currentBalance;
+      var myBalance;
+      // 모든 광고, 소유자, 돈 가져오기
+
+
+    
+    function getAdvertiseCount() {
+        return new Promise((res, rej) => {
+            instance.getAdvertiseCount(function(err, result) {
+                res(result.c[0])
+            })
+        })
+    }
+
+
+      function getAllAdvertise() {
+
+        // 보유 이더 가져오기
+        instance._eth.getBalance(instance._eth.accounts[0], function(err, result) {
+           myBalance = result.c[0]; 
+           myBalance = web3.toWei(myBalance, 'ether');
+           var userBalance = document.createElement("div");
+           userBalance.id = "user_balance";
+           userBalance.innerHTML = "My Balance : " + myBalance;
+           document.body.appendChild(userBalance);
+        });
+
+        // 광고 소유자 주소
+        instance.admin_address(function(error, result) {
+          if(!error) {
+            owner = result;
+            var ownerAddress = document.createElement("div");
+            ownerAddress.innerHTML = "Owner Address : " + owner    
+            document.body.appendChild(ownerAddress);
+          }
+        });        
+
+        // 광고에 남아있는 이더 수
+        instance.checkAdvertiseBalance(function(error, result) {
+          if(!error) {
+            balance = result.c[0];
+            var currentBalance = document.createElement("div");
+            currentBalance.innerHTML = "Current Balance : " + balance;
+            var newLine = document.createElement("br");            
+            document.body.appendChild(currentBalance);
+            document.body.appendChild(newLine);
+          }
+        });
+        
+        // 모든 광고 가져오기
+
+        getAll()
+
+      }
+
+      function getAll() {
+          getAdvertiseCount().then(result => {
+              for(let i=0; i< result; i++) {
+                  getAdvertiseName(i).then(result => {
+                      let tr = document.createElement("tr")
+                      let td1 = document.createElement("td")
+                      td1.innerHTML = (i+1)
+                      let td2 = document.createElement("td")
+                      td2.innerHTML = result
+                      tr.appendChild(td1)
+                      tr.appendChild(td2)
+                      let td3 = document.createElement("td")
+                      let button = document.createElement("button")
+                      button.onclick = function(){advertiseJoinMember(i)}
+                      button.innerHTML = "Join Advertise Member"
+                      td3.appendChild(button)
+                      tr.appendChild(td3)
+                      document.getElementById("tbody").appendChild(tr)
+                  })
+
+              }
+          })
+      }
+
+    function getAdvertiseName(arg0) {
+        return new Promise((res, rej) => {
+            instance.getAdvertiseName(arg0, function(err, result) {
+                res(result)
+            })
+        })
+    }
+    
+
+
+     function addAdvertise(url, name, length, minViews, funds) {
+       instance.addAdvertise(url, name, length, minViews,funds, {
+         from:instance._eth.accounts[0],
+         gas:3000000
+       },
+       function(error, result) {
+         getAllAdvertise();
+       });
+     }
+
+     // 가입
+     function advertiseJoinMember(index) {
+         console.log(index)
+          instance.registerMember(index, 
+            {
+              from: instance._eth.accounts[0], 
+              gas: 3000000
+            }, 
+            function(error, result) { 
+              console.log(result); 
+            } 
+          );
+      }
+
+      // 환급
+      function refunds(index, views) {
+        instance.refunds(index, views, {
+          from: instance._eth.accounts[0],
+          gas:3000000
+        },
+        function(error, result) {
+          var myBalance;
+          instance._eth.getBalance(instance._eth.accounts[0], function(err, result) {
+             myBalance = result.c[0];
+            //  document.getElementById('user_balance').innerHTML = myBalance;
+          });
+        })
+      }
+
+
+
+ 
+    </script>
+  </head>
+
+  <body>
+
+
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    <script src="assets/js/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+  
+    <button onclick="getAllAdvertise()">click</button>
+
+
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">name</th>
+            <th scope="col">join</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+
+        </tbody>
+      </table>
+  
+    <script>
+     // configuration
+
+      var abi = '[ { "constant": false, "inputs": [ { "name": "_url", "type": "string" }, { "name": "_name", "type": "string" }, { "name": "_advertiseLength", "type": "uint256" }, { "name": "_minimumViews", "type": "uint256" }, { "name": "_ratioViews", "type": "uint256" } ], "name": "addAdvertise", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "registerMember", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "kill", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" }, { "name": "views", "type": "uint256" } ], "name": "getCurrentViews", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getMemberCount", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getAdvertise", "outputs": [ { "name": "_advertise", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getAdvertiseCount", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getMember", "outputs": [ { "name": "_customer", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "addBalance", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "address" }, { "name": "", "type": "uint256" } ], "name": "advertises", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getAdminAddress", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "advertiseIndex", "type": "uint256" }, { "name": "views", "type": "uint256" } ], "name": "getReward", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getAdvertiseName", "outputs": [ { "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "isMember", "outputs": [ { "name": "", "type": "bool" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "uint256" }, { "name": "", "type": "uint256" } ], "name": "member", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "checkAdvertiseBalance", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" }, { "name": "userIndex", "type": "uint256" } ], "name": "getMemberAddress", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getCurrentAddress", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "admin_address", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" } ]';
+      var contractAddress = "0x8663d144c61abd31d9d991a67e08642b897c22d2";
+ 
+      // load web3.js
+      var Web3 = require('web3');
+      window.web3 = new Web3(window.web3.currentProvider);
+      var contract = window.web3.eth.contract(JSON.parse(abi));
+      var instance = contract.at(contractAddress);
+
+
+
+
+      // ToDo // attach local geth 
+      // var web3 = new Web3();
+      // web3 = web3.eth.currentProvider;
+      // alert(web3);
+
+      // window.web3 = new Web3(window.web3.currentProvider);
+      //web3.setProvider(new web3.providers.HttpProvider('http://192.168.99.20:8545'));
+
+      // load the contract object
+      // var blockshaperContract = window.web3.eth.contract(abi);
+      // var myContractInstance = blockshaperContract.at(contractAddress);
+      
+      function getCount() {
+        var filter = instance.getAdvetiseCount( function (error, result) {
+        if (!error)
+          console.log(result.c[0]);
+        });
+      }
+
+
+    </script>
+
+    <ul id="ad_list"></ul>
+
+  </body>
+</html>
