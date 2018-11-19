@@ -18,13 +18,13 @@
 
 
     
-    function getAdvertiseCount() {
-        return new Promise((res, rej) => {
-            instance.getAdvertiseCount(function(err, result) {
-                res(result.c[0])
+        function getAdvertiseCount() {
+            return new Promise((res, rej) => {
+                instance.getAdvertiseCount(function(err, result) {
+                    res(result.c[0])
+                })
             })
-        })
-    }
+        }
 
 
       function getAllAdvertise() {
@@ -75,7 +75,13 @@
                       let td1 = document.createElement("td")
                       td1.innerHTML = (i+1)
                       let td2 = document.createElement("td")
-                      td2.innerHTML = result
+                      let modalButton = document.createElement("button")
+                      modalButton.innerHTML = result
+                      modalButton.setAttribute("data-toggle", "modal")
+                      modalButton.setAttribute("data-target", "#exampleModal")
+                      modalButton.setAttribute("data-whatever", "data" + i)
+
+                      td2.appendChild(modalButton)
                       tr.appendChild(td1)
                       tr.appendChild(td2)
                       let td3 = document.createElement("td")
@@ -85,11 +91,43 @@
                       td3.appendChild(button)
                       tr.appendChild(td3)
                       document.getElementById("tbody").appendChild(tr)
+
+
+
+                    //   let divModalSuper = document.createElement("div")
+                    //   divModalSuper.className("modal fade")
+                    //   divModalSuper.id("exampleModal")
+                    //   divModalSuper.setAttribute("tabindex","-1")
+                    //   divModalSuper.setAttribute("role", "dialog")
+                    //   divModalSuper.setAttribute("aria-labelledby", "exampleModalLabel")
+                    //   divModalSuper.setAttribute("aria-hidden", "true")
+
+                    //   let divModalChild = document.createElement("div")
+                    //   divModalChild.className("modal-dialog")
+                    //   divModalChild.role("document")
+
+                    //   let divModalContent = document.createElement("div")
+                    //   divModalContent.className("modal-content")
+                      
+                    //   let divModalHeader = document.createElement("div")
+                    //   divModalHeader.className("modal-header")
+                      
+                    //   let h5ModalTitle = document.createElement("h5")
+                    //   h5ModalTitle.className("modal-title")
+                    //   h5ModalTitle.id("exampleModallabel")
+                    //   h5ModalTitle.innerHTML = "Modal Title"
+
+                      
                   })
 
               }
           })
       }
+
+
+
+
+
 
     function getAdvertiseName(arg0) {
         return new Promise((res, rej) => {
@@ -139,7 +177,6 @@
           });
         })
       }
-
 
 
  
@@ -208,5 +245,31 @@
 
     <ul id="ad_list"></ul>
 
+    <!-- Modal -->
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script>window.jQuery || document.write('<script src="/docs/4.0/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+
+<script src="/docs/4.0/assets/js/vendor/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script><script src="/docs/4.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script><script src="/docs/4.0/assets/js/docs.min.js"></script>
   </body>
 </html>
