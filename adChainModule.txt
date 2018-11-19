@@ -173,6 +173,18 @@ contract AdvertiseApplication is Producer {
         return advertises[getAdminAddress()][advertiseIndex].getName();
     }
     
+    function getAdvertiseUrl (uint advertiseIndex) public view returns(string) {
+        return advertises[getAdminAddress()][advertiseIndex].getUrl();
+    }
+    
+    function getMinimumViews (uint advertiseIndex) public view returns(uint) {
+        return advertises[getAdminAddress()][advertiseIndex].getMinimumViews();
+    }
+    
+    function getRewardRatio(uint advertiseIndex) public view returns(uint) {
+        return advertises[getAdminAddress()][advertiseIndex].getRewardRatio();
+    }
+    
     function getAdvertise(uint advertiseIndex) public view returns(Advertise _advertise) {
         Advertise ad = advertises[getAdminAddress()][advertiseIndex];
         

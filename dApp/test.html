@@ -78,7 +78,7 @@
                       let modalButton = document.createElement("button")
                       modalButton.innerHTML = result
                       modalButton.setAttribute("data-toggle", "modal")
-                      modalButton.setAttribute("data-target", "#exampleModal")
+                      modalButton.setAttribute("data-target", "#exampleModal" + i)
                       modalButton.setAttribute("data-whatever", "data" + i)
 
                       td2.appendChild(modalButton)
@@ -94,35 +94,77 @@
 
 
 
-                    //   let divModalSuper = document.createElement("div")
-                    //   divModalSuper.className("modal fade")
-                    //   divModalSuper.id("exampleModal")
-                    //   divModalSuper.setAttribute("tabindex","-1")
-                    //   divModalSuper.setAttribute("role", "dialog")
-                    //   divModalSuper.setAttribute("aria-labelledby", "exampleModalLabel")
-                    //   divModalSuper.setAttribute("aria-hidden", "true")
+                      let divModalSuper = document.createElement("div")
+                      divModalSuper.className = "modal fade"
+                      divModalSuper.id = "exampleModal" + i
+                      divModalSuper.setAttribute("tabindex","-1")
+                      divModalSuper.setAttribute("role", "dialog")
+                      divModalSuper.setAttribute("aria-labelledby", "exampleModalLabel")
+                      divModalSuper.setAttribute("aria-hidden", "true")
 
-                    //   let divModalChild = document.createElement("div")
-                    //   divModalChild.className("modal-dialog")
-                    //   divModalChild.role("document")
+                      let divModalChild = document.createElement("div")
+                      divModalChild.className= "modal-dialog"
+                      divModalChild.setAttribute("role", "document")
 
-                    //   let divModalContent = document.createElement("div")
-                    //   divModalContent.className("modal-content")
+                      let divModalContent = document.createElement("div")
+                      divModalContent.className = "modal-content"
                       
-                    //   let divModalHeader = document.createElement("div")
-                    //   divModalHeader.className("modal-header")
+                      let divModalHeader = document.createElement("div")
+                      divModalHeader.className = "modal-header"
                       
-                    //   let h5ModalTitle = document.createElement("h5")
-                    //   h5ModalTitle.className("modal-title")
-                    //   h5ModalTitle.id("exampleModallabel")
-                    //   h5ModalTitle.innerHTML = "Modal Title"
+                      let h5ModalTitle = document.createElement("h5")
+                      h5ModalTitle.className = "modal-title"
+                      h5ModalTitle.id = "exampleModallabel" + i
+                      h5ModalTitle.innerHTML = "Modal Title"
 
-                      
+                      let buttonMotal = document.createElement("button")
+                      buttonMotal.className = "close"
+                      buttonMotal.setAttribute("data-dismiss", "modal")
+                      buttonMotal.setAttribute("aria-label", "Close")
+
+                      let spanMotal = document.createElement("span")
+                      spanMotal.setAttribute("aria-hidden", "true")
+                      spanMotal.innerHTML = "&times;"
+
+                      buttonMotal.appendChild(spanMotal)
+                      divModalHeader.appendChild(h5ModalTitle)
+                      divModalHeader.appendChild(buttonMotal)
+
+                      let divBodyModal = document.createElement("div")
+                      divBodyModal.className = "modal-body"
+
+                      getUrl(i).
+
+                      divBodyModal.innerHTML = "abcdefgh " + i
+
+                      let divModalFooter = document.createElement("div")
+                      divModalFooter.className = "modal-footer"
+
+                      let buttonSecondaryModal = document.createElement("button")
+                      buttonSecondaryModal.className = "btn btn-secondary"
+                      buttonSecondaryModal.setAttribute("data-dismiss", "modal")
+                      buttonSecondaryModal.innerHTML = "Close"
+
+                      let buttonPrimaryModal = document.createElement("button")
+                      buttonPrimaryModal.className = "btn btn-primary"
+                      buttonPrimaryModal.innerHTML = "Save Changes"
+
+                      divModalFooter.appendChild(buttonSecondaryModal)
+                      divModalFooter.appendChild(buttonPrimaryModal)
+
+                      divModalContent.appendChild(divModalHeader)
+                      divModalContent.appendChild(divBodyModal)
+                      divModalContent.appendChild(divModalFooter)
+
+                      divModalChild.appendChild(divModalContent)
+                      divModalSuper.appendChild(divModalChild)
+                      document.body.appendChild(divModalSuper)
                   })
 
               }
           })
       }
+
 
 
 
@@ -136,7 +178,23 @@
             })
         })
     }
-    
+
+
+  function getMinimumViews (arg0) { 
+    return new Promise((res, rej) => {
+      instance.getMinimumViews(arg0, function (err, result) { 
+        res(result)
+      })
+    }) 
+  }
+
+  function getAdvertiseUrl (arg0) { 
+    return new Promise((res, rej) => {
+        instance.getAdvertiseUrl(arg0, function (err, result) {
+          res(result)
+       })
+    }) 
+  }
 
 
      function addAdvertise(url, name, length, minViews, funds) {
@@ -209,7 +267,7 @@
     <script>
      // configuration
 
-      var abi = '[ { "constant": false, "inputs": [ { "name": "_url", "type": "string" }, { "name": "_name", "type": "string" }, { "name": "_advertiseLength", "type": "uint256" }, { "name": "_minimumViews", "type": "uint256" }, { "name": "_ratioViews", "type": "uint256" } ], "name": "addAdvertise", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "registerMember", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "kill", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" }, { "name": "views", "type": "uint256" } ], "name": "getCurrentViews", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getMemberCount", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getAdvertise", "outputs": [ { "name": "_advertise", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getAdvertiseCount", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getMember", "outputs": [ { "name": "_customer", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "addBalance", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "address" }, { "name": "", "type": "uint256" } ], "name": "advertises", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getAdminAddress", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "advertiseIndex", "type": "uint256" }, { "name": "views", "type": "uint256" } ], "name": "getReward", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getAdvertiseName", "outputs": [ { "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "isMember", "outputs": [ { "name": "", "type": "bool" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "uint256" }, { "name": "", "type": "uint256" } ], "name": "member", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "checkAdvertiseBalance", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" }, { "name": "userIndex", "type": "uint256" } ], "name": "getMemberAddress", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getCurrentAddress", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "admin_address", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" } ]';
+      var abi = '[ { "constant": false, "inputs": [ { "name": "_url", "type": "string" }, { "name": "_name", "type": "string" }, { "name": "_advertiseLength", "type": "uint256" }, { "name": "_minimumViews", "type": "uint256" }, { "name": "_ratioViews", "type": "uint256" } ], "name": "addAdvertise", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "registerMember", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getRewardRatio", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getAdvertiseUrl", "outputs": [ { "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "kill", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" }, { "name": "views", "type": "uint256" } ], "name": "getCurrentViews", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getMemberCount", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getAdvertise", "outputs": [ { "name": "_advertise", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getAdvertiseCount", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getMember", "outputs": [ { "name": "_customer", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "addBalance", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "address" }, { "name": "", "type": "uint256" } ], "name": "advertises", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getAdminAddress", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "name": "advertiseIndex", "type": "uint256" }, { "name": "views", "type": "uint256" } ], "name": "getReward", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getAdvertiseName", "outputs": [ { "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "isMember", "outputs": [ { "name": "", "type": "bool" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "", "type": "uint256" }, { "name": "", "type": "uint256" } ], "name": "member", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "checkAdvertiseBalance", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" } ], "name": "getMinimumViews", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "name": "advertiseIndex", "type": "uint256" }, { "name": "userIndex", "type": "uint256" } ], "name": "getMemberAddress", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "getCurrentAddress", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "admin_address", "outputs": [ { "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" } ]';
       var contractAddress = "0x8663d144c61abd31d9d991a67e08642b897c22d2";
  
       // load web3.js
@@ -248,24 +306,23 @@
     <!-- Modal -->
 
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
           </div>
         </div>
       </div>
-
+    </div>
 
       <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script>window.jQuery || document.write('<script src="/docs/4.0/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
